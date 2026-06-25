@@ -13,4 +13,7 @@ public interface StateHandler {
     default void handleCallback(UserSession session, String data) {
         session.sendMessage("Это действие сейчас недоступно. Попробуйте снова.");
     }
+
+    default void onEnter(UserSession session) {
+    }
 }

@@ -29,6 +29,7 @@ public class StateDispatcher {
     }
 
     public void dispatch(Update update, TelegramClient client) {
+
         Long telegramId = extractTelegramId(update);
         if (telegramId == null) {
             return;
@@ -49,10 +50,10 @@ public class StateDispatcher {
         if (update.hasMessage() && update.getMessage().hasText()) {
             String text = update.getMessage().getText();
             if (text.equals(Keyboards.MENU_BUTTON_TEXT)) {
-                UserSession session = new UserSession(user, client, userRepository);
+                UserSession session = new UserSession(user, client, userRepository, this);
                 user.setState(BotState.MENU);
                 userRepository.save(user);
-                menuHandler.showMenu(session);
+                menuHandler.onEnter(session);
                 return;
             }
         }
@@ -62,7 +63,7 @@ public class StateDispatcher {
             return;
         }
 
-        UserSession session = new UserSession(user, client, userRepository);
+        UserSession session = new UserSession(user, client, userRepository, this);
 
         if (update.hasCallbackQuery()) {
             String data = update.getCallbackQuery().getData();
@@ -75,6 +76,14 @@ public class StateDispatcher {
         else if (update.hasMessage() && update.getMessage().hasContact()) {
             String phone = update.getMessage().getContact().getPhoneNumber();
             handler.handleText(session, phone);
+        }
+    }
+
+    public void enterState(UserSession session, BotState newState) {
+        session.setState(newState);
+        StateHandler handler = handlers.get(newState);
+        if (handler != null) {
+            handler.onEnter(session);
         }
     }
 
@@ -105,7 +114,7 @@ public class StateDispatcher {
         user.setPhone(user.getPhone() != null ? user.getPhone() : "+375000000000");
         userRepository.save(user);
 
-        UserSession session = new UserSession(user, client, userRepository);
+        UserSession session = new UserSession(user, client, userRepository, this);
         session.sendMessage("Тестовый вход выполнен. Роль: " + role + ". Состояние: MENU.");
     }
 }

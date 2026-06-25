@@ -14,11 +14,9 @@ import java.util.Optional;
 public class RegistrationPhoneHandler implements StateHandler {
 
     private final UserRepository userRepository;
-    private final MenuHandler menuHandler;
 
-    public RegistrationPhoneHandler(UserRepository userRepository, MenuHandler menuHandler) {
+    public RegistrationPhoneHandler(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.menuHandler = menuHandler;
     }
 
     @Override
@@ -35,12 +33,10 @@ public class RegistrationPhoneHandler implements StateHandler {
 
         Role role = resolveRole(phone, user);
         user.setRole(role);
-        user.setState(BotState.MENU);
         session.saveUser();
 
         session.sendMessage("Добро пожаловать! Теперь вам доступны запись на приём, история и информация о клинике.", Keyboards.menuButton());
-        menuHandler.showMenu(session);
-
+        session.goTo(BotState.MENU);
     }
 
     private String normalizePhone(String phone) {

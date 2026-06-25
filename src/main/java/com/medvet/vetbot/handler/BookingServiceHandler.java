@@ -30,8 +30,14 @@ public class BookingServiceHandler implements StateHandler {
         return BotState.BOOKING_CHOOSING_SERVICE;
     }
 
-    public void showServices(UserSession session) {
+    @Override
+    public void onEnter(UserSession session) {
         List<Service> services = serviceRepository.findAll();
+
+        if (services.isEmpty()) {
+            session.sendMessage("К сожалению, сейчас нет доступных услуг.");
+            return;
+        }
 
         List<InlineKeyboardRow> rows = new ArrayList<>();
         for (Service service : services) {
@@ -42,10 +48,7 @@ public class BookingServiceHandler implements StateHandler {
             rows.add(new InlineKeyboardRow(button));
         }
 
-        InlineKeyboardMarkup keyboard = InlineKeyboardMarkup.builder()
-                .keyboard(rows)
-                .build();
-
+        InlineKeyboardMarkup keyboard = InlineKeyboardMarkup.builder().keyboard(rows).build();
         session.sendMessage("Выберите услугу:", keyboard);
     }
 
@@ -67,7 +70,6 @@ public class BookingServiceHandler implements StateHandler {
         draft.setService(service);
         draftService.save(draft);
 
-        session.sendMessage("Услуга выбрана: " + service.getName() + ". Теперь выберите дату. (скоро будет)");
-        session.setState(BotState.BOOKING_CHOOSING_DATE);
+        session.goTo(BotState.BOOKING_CHOOSING_DATE);
     }
 }

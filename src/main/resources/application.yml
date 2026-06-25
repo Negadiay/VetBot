@@ -22,3 +22,11 @@ clinic:
   name: "Ветеринарная клиника МЕДВЕТ"
   address: "ул. Ковпинца 12"
   phone: "+375441234567"
+
+booking:
+  horizon-days: 30
+  dates-page-size: 8
+  work-start: "09:00"
+  work-end: "21:00"
+  slot-minutes: 30
+  times-page-size: 12

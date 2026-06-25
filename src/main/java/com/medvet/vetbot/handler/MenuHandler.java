@@ -13,11 +13,9 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 public class MenuHandler implements StateHandler {
 
     private final ClinicProperties clinicProperties;
-    private final BookingServiceHandler bookingServiceHandler;
 
-    public MenuHandler(ClinicProperties clinicProperties, BookingServiceHandler bookingServiceHandler) {
+    public MenuHandler(ClinicProperties clinicProperties) {
         this.clinicProperties = clinicProperties;
-        this.bookingServiceHandler = bookingServiceHandler;
     }
 
     @Override
@@ -26,15 +24,24 @@ public class MenuHandler implements StateHandler {
     }
 
     @Override
+    public void onEnter(UserSession session) {
+        if (session.getUser().getRole() == Role.EMPLOYEE) {
+            session.sendMessage("Меню сотрудника. Выберите действие:", buildEmployeeMenu());
+        } else {
+            session.sendMessage("Главное меню. Выберите действие:", buildClientMenu());
+        }
+    }
+
+    @Override
     public void handleText(UserSession session, String text) {
-        showMenu(session);
+        onEnter(session);
     }
 
     @Override
     public void handleCallback(UserSession session, String data) {
         switch (data) {
             case "menu:about" -> showAbout(session);
-            case "menu:booking" -> startBooking(session);
+            case "menu:booking" -> session.goTo(BotState.BOOKING_CHOOSING_SERVICE);
             case "menu:history" -> session.sendMessage("История записей — скоро.");
             case "menu:bookings" -> session.sendMessage("Записи клиники — скоро.");
             case "menu:search" -> session.sendMessage("Поиск — скоро.");
@@ -47,19 +54,6 @@ public class MenuHandler implements StateHandler {
                 + clinicProperties.getAddress() + "\n"
                 + "Телефон для справок: " + clinicProperties.getPhone();
         session.sendMessage(text);
-    }
-
-    private void startBooking(UserSession session) {
-        session.setState(BotState.BOOKING_CHOOSING_SERVICE);
-        bookingServiceHandler.showServices(session);
-    }
-
-    public void showMenu(UserSession session) {
-        if (session.getUser().getRole() == Role.EMPLOYEE) {
-            session.sendMessage("Меню сотрудника. Выберите действие:", buildEmployeeMenu());
-        } else {
-            session.sendMessage("Главное меню. Выберите действие:", buildClientMenu());
-        }
     }
 
     private InlineKeyboardMarkup buildClientMenu() {
