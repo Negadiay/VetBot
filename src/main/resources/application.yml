@@ -15,7 +15,7 @@ spring:
     baseline-on-migrate: true
 
 bot:
-  token: 8677555224:AAGSg7ADr-D1mSsKdAGXrCRjd1EkEMK8zas
+  token: ${BOT_TOKEN}
   username: medvet_booking_bot
 
 clinic:
