@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/vetbot
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+
+bot:
+  token: 8677555224:AAGSg7ADr-D1mSsKdAGXrCRjd1EkEMK8zas
+  username: medvet_booking_bot
+
+clinic:
+  name: "Ветеринарная клиника МЕДВЕТ"
+  address: "ул. Ковпинца 12"
+  phone: "+375441234567"
