@@ -34,7 +34,7 @@ public class MenuHandler implements StateHandler {
 
     @Override
     public void handleText(UserSession session, String text) {
-        onEnter(session);
+        session.sendMessage("Не распознал запрос. Воспользуйтесь кнопками меню для навигации.");
     }
 
     @Override

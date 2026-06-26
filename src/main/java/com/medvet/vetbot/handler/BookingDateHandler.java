@@ -1,5 +1,6 @@
 package com.medvet.vetbot.handler;
 
+import com.medvet.vetbot.bot.Keyboards;
 import com.medvet.vetbot.bot.Paginator;
 import com.medvet.vetbot.bot.UserSession;
 import com.medvet.vetbot.config.BookingProperties;
@@ -9,6 +10,7 @@ import com.medvet.vetbot.service.BookingDraftService;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -40,20 +42,16 @@ public class BookingDateHandler implements StateHandler {
 
     private void showDates(UserSession session, int page) {
         List<LocalDate> allDates = generateDates();
+        List<InlineKeyboardRow> extra = List.of(new InlineKeyboardRow(Keyboards.backButton()));
 
         InlineKeyboardMarkup keyboard = Paginator.paginate(
-                allDates,
-                page,
-                bookingProperties.getDatesPageSize(),
-                1,
-                "date_page:",
+                allDates, page, bookingProperties.getDatesPageSize(), 1, "date_page:",
                 date -> InlineKeyboardButton.builder()
                         .text(date.format(BUTTON_FORMAT))
                         .callbackData("date:" + date)
                         .build(),
-                null
+                extra
         );
-
         session.sendMessage("Выберите дату приёма:", keyboard);
     }
 

@@ -1,5 +1,6 @@
 package com.medvet.vetbot.handler;
 
+import com.medvet.vetbot.bot.Keyboards;
 import com.medvet.vetbot.bot.UserSession;
 import com.medvet.vetbot.domain.BookingDraft;
 import com.medvet.vetbot.domain.BotState;
@@ -41,12 +42,12 @@ public class BookingServiceHandler implements StateHandler {
 
         List<InlineKeyboardRow> rows = new ArrayList<>();
         for (Service service : services) {
-            InlineKeyboardButton button = InlineKeyboardButton.builder()
+            rows.add(new InlineKeyboardRow(InlineKeyboardButton.builder()
                     .text(service.getName())
                     .callbackData("service:" + service.getId())
-                    .build();
-            rows.add(new InlineKeyboardRow(button));
+                    .build()));
         }
+        rows.add(new InlineKeyboardRow(Keyboards.backButton()));  // ← добавили
 
         InlineKeyboardMarkup keyboard = InlineKeyboardMarkup.builder().keyboard(rows).build();
         session.sendMessage("Выберите услугу:", keyboard);
@@ -72,4 +73,6 @@ public class BookingServiceHandler implements StateHandler {
 
         session.goTo(BotState.BOOKING_CHOOSING_DATE);
     }
+
+
 }

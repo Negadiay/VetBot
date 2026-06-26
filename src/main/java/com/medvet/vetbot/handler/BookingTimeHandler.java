@@ -1,5 +1,6 @@
 package com.medvet.vetbot.handler;
 
+import com.medvet.vetbot.bot.Keyboards;
 import com.medvet.vetbot.bot.Paginator;
 import com.medvet.vetbot.bot.UserSession;
 import com.medvet.vetbot.config.BookingProperties;
@@ -46,14 +47,14 @@ public class BookingTimeHandler implements StateHandler {
         List<LocalTime> slots = slotService.availableSlots(draft.getService().getId(), draft.getAppointmentDate());
 
         if (slots.isEmpty()) {
-            session.sendMessage("На эту дату нет свободного времени. Выберите другую дату.", backToDateKeyboard());
+            InlineKeyboardMarkup keyboard = InlineKeyboardMarkup.builder()
+                    .keyboardRow(new InlineKeyboardRow(Keyboards.backButton()))
+                    .build();
+            session.sendMessage("На эту дату нет свободного времени. Выберите другую дату.", keyboard);
             return;
         }
 
-        List<InlineKeyboardRow> extra = List.of(
-                new InlineKeyboardRow(InlineKeyboardButton.builder()
-                        .text("К выбору даты").callbackData("back:date").build())
-        );
+        List<InlineKeyboardRow> extra = List.of(new InlineKeyboardRow(Keyboards.backButton()));
 
         InlineKeyboardMarkup keyboard = Paginator.paginate(
                 slots,
@@ -69,13 +70,6 @@ public class BookingTimeHandler implements StateHandler {
         );
 
         session.sendMessage("Выберите время приёма:", keyboard);
-    }
-
-    private InlineKeyboardMarkup backToDateKeyboard() {
-        return InlineKeyboardMarkup.builder()
-                .keyboardRow(new InlineKeyboardRow(InlineKeyboardButton.builder()
-                        .text("К выбору даты").callbackData("back:date").build()))
-                .build();
     }
 
     @Override

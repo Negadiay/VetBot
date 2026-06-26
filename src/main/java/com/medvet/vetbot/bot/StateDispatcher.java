@@ -58,6 +58,15 @@ public class StateDispatcher {
             }
         }
 
+        if (update.hasCallbackQuery() && update.getCallbackQuery().getData().equals(BackNavigation.BACK_CALLBACK)) {
+            UserSession session = new UserSession(user, client, userRepository, this);
+            BotState previous = BackNavigation.previousOf(user.getState());
+            if (previous != null) {
+                session.goTo(previous);
+            }
+            return;
+        }
+
         StateHandler handler = handlers.get(user.getState());
         if (handler == null) {
             return;
@@ -115,6 +124,6 @@ public class StateDispatcher {
         userRepository.save(user);
 
         UserSession session = new UserSession(user, client, userRepository, this);
-        session.sendMessage("Тестовый вход выполнен. Роль: " + role + ". Состояние: MENU.");
+        session.sendMessage("Тестовый вход выполнен. Роль: " + role + ". Состояние: MENU.", Keyboards.menuButton());
     }
 }

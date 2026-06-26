@@ -12,4 +12,6 @@ import java.util.List;
 public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query("SELECT b.appointmentTime FROM Booking b WHERE b.service.id = :serviceId AND b.appointmentDate = :date")
     List<LocalTime> findTakenTimes(@Param("serviceId") Long serviceId, @Param("date") LocalDate date);
+
+    boolean existsByServiceIdAndAppointmentDateAndAppointmentTime(Long serviceId, LocalDate date, LocalTime time);
 }

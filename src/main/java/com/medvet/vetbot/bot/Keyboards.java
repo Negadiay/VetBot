@@ -1,6 +1,7 @@
 package com.medvet.vetbot.bot;
 
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
@@ -22,6 +23,13 @@ public final class Keyboards {
         return ReplyKeyboardMarkup.builder()
                 .keyboardRow(row)
                 .resizeKeyboard(true)
+                .build();
+    }
+
+    public static InlineKeyboardButton backButton() {
+        return InlineKeyboardButton.builder()
+                .text("Пред. этап")
+                .callbackData(BackNavigation.BACK_CALLBACK)
                 .build();
     }
 }
